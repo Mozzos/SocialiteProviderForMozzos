@@ -2,6 +2,7 @@
 
 namespace Udoless\SocialiteProviders\Mozzos;
 
+use Illuminate\Http\Request;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
@@ -13,6 +14,13 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     protected $scopes = [];
 
+    function __construct(Request $request, $clientId, $clientSecret, $redirectUrl){
+        parent::__construct($request, $clientId, $clientSecret, $redirectUrl);
+
+        $scopesConfig = config('services.mozzos.scopes');
+        $scopesConfig = is_array($scopesConfig)?$scopesConfig:['r_user.profile'];
+        $this->scopes = $scopesConfig;
+    }
     /**
      * {@inheritdoc}
      */
@@ -37,7 +45,7 @@ class Provider extends AbstractProvider implements ProviderInterface
     protected function getUserByToken($token)
     {
         $response = $this->getHttpClient()->get(
-            'https://api.mozzos.com/user', [
+            'http://api.mozzos.com/user/profile', [
             'headers' => [
                 'Accept-Language' => 'en-US',
                 'x-li-format' => 'json',
@@ -66,7 +74,7 @@ class Provider extends AbstractProvider implements ProviderInterface
     public function getAccessToken($code)
     {
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
-            'form_params' => $this->getTokenFields($code),
+            'form_params' => array_merge($this->getTokenFields($code),['grant_type'=>'authorization_code']),
         ]);
 
         return $this->parseAccessToken($response->getBody());
