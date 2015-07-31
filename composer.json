@@ -1,0 +1,18 @@
+{
+    "name": "udoless/socialiteprovider-mozzos",
+    "description": "Mozzos OAuth2 Provider for Laravel Socialite",
+    "license": "MIT",
+    "authors": [{
+        "name": "Haozhong Liu",
+        "email": "udoless@gmail.com"
+    }],
+    "require": {
+        "php": ">=5.5.0",
+        "socialiteproviders/manager": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Udoless\\SocialiteProviders\\Mozzos\\": "src/"
+        }
+    }
+}
